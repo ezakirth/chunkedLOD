@@ -3,7 +3,6 @@ import { doAction } from "./GUI.js";
 import { input } from "./input.js";
 import { textures } from "./textures.js";
 import { mat4 } from "./gl-matrix/index.js";
-import { initWorkers } from "./workers/initWorkers.js";
 
 let graphics = new Graphics();
 let gl = graphics.getContext();
@@ -14,13 +13,21 @@ Array.prototype.remove = function (from, to) {
   return this.push.apply(this, rest);
 };
 
+Worker.prototype.setStatus = function (id, status) {
+  this.status[id] = status;
+};
+
+Worker.prototype.getStatus = function (id) {
+  if (typeof this.status[id] == "undefined") this.status[id] = "ready";
+  return this.status[id];
+};
+
+Worker.prototype.status = new Array();
+
 window.gl = gl;
 
 let useLocalStorage = true;
 window.graphics = graphics;
-window.workerGenerateTerrain = null;
-window.workerUpdateShadows = null;
-window.workerGenerateChunk = null;
 
 window.doAction = doAction;
 window.mat4 = mat4;
@@ -28,7 +35,7 @@ window.textures = textures;
 window.input = input;
 
 window.totalLoading = 0;
-window.terrainDepth = 3;
+window.terrainDepth = 6;
 window.mapSize = 512;
 window.sizeRatio = 1;
 window.frustum = null;
@@ -83,8 +90,6 @@ function init() {
   doAction();
 
   graphics.init();
-
-  initWorkers();
 }
 
 init();

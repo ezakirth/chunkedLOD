@@ -1,4 +1,4 @@
-self.onmessage = function (event) {
+onmessage = function (event) {
   var message = event.data;
 
   var id = message.id;
@@ -6,7 +6,6 @@ self.onmessage = function (event) {
 
   var boundingSphere = loadData(message);
 
-  //  setTimeout(function(){
   var returnMessage = {
     id: message.id,
     node: message.node,
@@ -15,11 +14,10 @@ self.onmessage = function (event) {
     heightmapDataBuffer: message.heightmapDataBuffer,
   };
 
-  self.postMessage(returnMessage, [
+  postMessage(returnMessage, [
     returnMessage.heightmapDataBuffer,
     returnMessage.interleavedArrayBuffer,
   ]);
-  // }, 10);
 };
 
 var loadData = function (message) {

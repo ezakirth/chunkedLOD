@@ -8,7 +8,7 @@ export default class Quadtree {
     this.ymax = ymax;
     this.d = d;
     this.lod = Math.pow(2, d) * viewPort;
-    this.depth = 4 - d;
+    this.depth = 8 - d;
     this.chunk = null;
     this.children = null;
     if (d > 0) {
@@ -45,8 +45,9 @@ export default class Quadtree {
 
       var chunkScreenError = this.getScreenError();
 
-      if (chunkScreenError <= 32 || !child) {
-        var n = chunkScreenError / 16 - 1;
+      let quality = 48;
+      if (chunkScreenError <= quality || !child) {
+        var n = chunkScreenError / (quality / 2) - 1;
         if (n > 1) n = 1;
         if (n < 0) n = 0;
 

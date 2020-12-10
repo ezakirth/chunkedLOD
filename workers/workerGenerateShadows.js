@@ -1,4 +1,4 @@
-self.onmessage = function (event) {
+onmessage = function (event) {
   var message = event.data;
 
   var textureView = new Uint8Array(message.textureDataBuffer);
@@ -49,7 +49,7 @@ self.onmessage = function (event) {
     textureDataBuffer: message.textureDataBuffer,
   };
 
-  self.postMessage(returnMessage, [
+  postMessage(returnMessage, [
     returnMessage.heightmapDataBuffer,
     returnMessage.textureDataBuffer,
   ]);

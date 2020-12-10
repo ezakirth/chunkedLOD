@@ -1,6 +1,6 @@
 import SimplexNoise from "./noise.js";
 
-self.onmessage = function (event) {
+onmessage = function (event) {
   //  importScripts("noise.js");
   var message = event.data;
 
@@ -100,7 +100,7 @@ self.onmessage = function (event) {
     //       seedBuffer: message.seedBuffer
   };
 
-  self.postMessage(returnMessage, [
+  postMessage(returnMessage, [
     returnMessage.heightmapDataBuffer,
     returnMessage.shadowsTextureDataBuffer,
     returnMessage.normalsTextureDataBuffer,

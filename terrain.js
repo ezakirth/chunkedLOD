@@ -1,12 +1,13 @@
 import { extractFrustum } from "./frustum.js";
-import { generateTerrain } from "./workers/initWorkers.js";
+import { generateTerrain } from "./workers/GenerateTerrain.js";
 import Heightmap from "./heightmap.js";
 
 export default class Terrain {
   constructor() {
     this.initChunks();
 
-    this.setProgram(programs.terrain);
+    if (input.fog) this.setProgram(programs.terrain);
+    else this.setProgram(programs.terrainNoFog);
 
     gl.uniform1i(this.uTextureGrass, 0);
     gl.uniform1i(this.uTextureDirt, 1);
@@ -35,6 +36,43 @@ export default class Terrain {
     this.uTextureDirt = gl.getUniformLocation(prog, "uTextureDirt");
     this.uTextureNormals = gl.getUniformLocation(prog, "uTextureNormals");
     this.uTextureShadows = gl.getUniformLocation(prog, "uTextureShadows");
+  }
+
+  initChunks() {
+    this.genIndices();
+
+    this.heightmaps = new Array();
+    this.sunHeight = 1;
+
+    this.heightmaps.push(new Heightmap({ x: 0, z: 0 }));
+
+    for (var x = -1; x <= 1; x++) {
+      for (var z = -1; z <= 1; z++) {
+        if (x != 0 || z != 0)
+          this.heightmaps.push(
+            new Heightmap({ x: x * mapSize, z: z * mapSize })
+          );
+      }
+    }
+
+    for (var x = -2; x <= 2; x++) {
+      for (var z = -2; z <= 2; z++) {
+        if (
+          (x != 0 || z != 0) &&
+          (x != 1 || z != 0) &&
+          (x != -1 || z != 0) &&
+          (x != 0 || z != 1) &&
+          (x != 0 || z != -1) &&
+          (x != -1 || z != -1) &&
+          (x != 1 || z != 1) &&
+          (x != 1 || z != -1) &&
+          (x != -1 || z != 1)
+        )
+          this.heightmaps.push(
+            new Heightmap({ x: x * mapSize, z: z * mapSize })
+          );
+      }
+    }
   }
 
   updateChunks() {
@@ -138,42 +176,6 @@ export default class Terrain {
     gl.disableVertexAttribArray(this.aTextureCoordinates);
   }
 
-  initChunks() {
-    this.genIndices();
-
-    this.heightmaps = new Array();
-    this.sunHeight = 1;
-
-    this.heightmaps.push(new Heightmap({ x: 0, z: 0 }));
-
-    for (var x = -1; x <= 1; x++) {
-      for (var z = -1; z <= 1; z++) {
-        if (x != 0 || z != 0)
-          this.heightmaps.push(
-            new Heightmap({ x: x * mapSize, z: z * mapSize })
-          );
-      }
-    }
-
-    for (var x = -2; x <= 2; x++) {
-      for (var z = -2; z <= 2; z++) {
-        if (
-          (x != 0 || z != 0) &&
-          (x != 1 || z != 0) &&
-          (x != -1 || z != 0) &&
-          (x != 0 || z != 1) &&
-          (x != 0 || z != -1) &&
-          (x != -1 || z != -1) &&
-          (x != 1 || z != 1) &&
-          (x != 1 || z != -1) &&
-          (x != -1 || z != 1)
-        )
-          this.heightmaps.push(
-            new Heightmap({ x: x * mapSize, z: z * mapSize })
-          );
-      }
-    }
-  }
   genIndices() {
     var size = mapSize / Math.pow(2, terrainDepth);
     var indicesBuffer = new ArrayBuffer((size * size + size * 4) * 6 * 2);
