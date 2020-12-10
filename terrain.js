@@ -1,5 +1,8 @@
 import { extractFrustum } from "./frustum.js";
-import { generateTerrain } from "./workers/GenerateTerrain.js";
+import {
+  workerGenerateTerrain,
+  generateTerrain,
+} from "./workers/GenerateTerrain.js";
 import Heightmap from "./heightmap.js";
 
 export default class Terrain {
@@ -95,7 +98,7 @@ export default class Terrain {
           }
         }
 
-        if (!used && workerGenerateTerrain.getStatus(0) == "ready")
+        if (!used && workerGenerateTerrain.getStatus(id) == "ready")
           terrain.heightmaps.remove(id);
       }
     }
@@ -163,7 +166,7 @@ export default class Terrain {
       heightmap = this.heightmaps[id];
       if (heightmap) {
         if (heightmap.loaded) {
-          totalLoading++;
+          if (heightmap.treeLoaded) totalLoading++;
           heightmap.render();
         } else {
           generateTerrain(id);

@@ -1,5 +1,4 @@
 import { generateChunk } from "./GenerateChunk.js";
-import { workerGenerateShadows } from "./GenerateShadows.js";
 
 const workerGenerateTerrain = new Worker(
   "./workers/GenerateTerrain.worker.js",
@@ -47,7 +46,7 @@ workerGenerateTerrain.onmessage = function (e) {
   heightmap.treeLoaded = false;
   heightmap.loaded = true;
 
-  this.setStatus(0, "ready");
+  this.setStatus(id, "ready");
   generateChunk(id);
 };
 workerGenerateTerrain.onerror = function (e) {
@@ -56,12 +55,8 @@ workerGenerateTerrain.onerror = function (e) {
 
 function generateTerrain(id) {
   var worker = workerGenerateTerrain;
-  if (
-    worker.getStatus(0) == "ready" &&
-    workerGenerateShadows.getStatus(0) == "ready"
-  ) {
-    worker.setStatus(0, "busy");
-
+  if (worker.getStatus(id) == "ready") {
+    worker.setStatus(id, "busy");
     var message = {
       id: id,
       offset: terrain.heightmaps[id].pos,

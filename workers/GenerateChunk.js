@@ -22,7 +22,7 @@ workerGenerateChunk.onmessage = function (e) {
   gl.bindBuffer(gl.ARRAY_BUFFER, chunk.interleavedArrayBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, chunk.interleavedArray, gl.STATIC_DRAW);
 
-  this.setStatus(0, "ready");
+  this.setStatus(id, "ready");
 
   heightmap.currentNode--;
 
@@ -40,14 +40,11 @@ workerGenerateChunk.onerror = function (e) {
 
 function generateChunk(id) {
   var worker = workerGenerateChunk;
-  if (
-    worker.getStatus(0) == "ready" &&
-    workerGenerateTerrain.getStatus(0) == "ready"
-  ) {
+  if (worker.getStatus(id) == "ready") {
     var heightmap = terrain.heightmaps[id];
     var node = heightmap.treeNodeList[heightmap.currentNode];
     if (node) {
-      worker.setStatus(0, "busy");
+      worker.setStatus(id, "busy");
 
       var xmin = node.xmin;
       var zmin = node.ymin;
