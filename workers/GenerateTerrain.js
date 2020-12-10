@@ -1,9 +1,13 @@
 import { generateChunk } from "./GenerateChunk.js";
 import { workerGenerateShadows } from "./GenerateShadows.js";
 
-const workerGenerateTerrain = new Worker("./workers/workerGenerateTerrain.js", {
-  type: "module",
-});
+const workerGenerateTerrain = new Worker(
+  "./workers/GenerateTerrain.worker.js",
+  {
+    type: "module",
+  }
+);
+
 workerGenerateTerrain.onmessage = function (e) {
   var message = e.data;
   var id = message.id;
@@ -69,7 +73,7 @@ function generateTerrain(id) {
       shadowsTextureDataBuffer: terrain.heightmaps[id].normalsTextureDataBuffer,
       seedBuffer: seedBuffer,
     };
-    //        worker.postMessage(message, [message.seedBuffer, message.heightmapDataBuffer, message.normalsTextureDataBuffer, message.shadowsTextureDataBuffer]);
+
     worker.postMessage(message, [
       message.heightmapDataBuffer,
       message.normalsTextureDataBuffer,

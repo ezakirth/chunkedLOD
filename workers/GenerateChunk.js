@@ -1,8 +1,9 @@
 import { workerGenerateTerrain } from "./GenerateTerrain.js";
 
-const workerGenerateChunk = new Worker("./workers/workerGenerateChunk.js", {
+const workerGenerateChunk = new Worker("./workers/GenerateChunk.worker.js", {
   type: "module",
 });
+
 workerGenerateChunk.onmessage = function (e) {
   var message = e.data;
   var id = message.id;

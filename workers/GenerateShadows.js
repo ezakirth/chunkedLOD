@@ -1,6 +1,10 @@
-const workerGenerateShadows = new Worker("./workers/workerGenerateShadows.js", {
-  type: "module",
-});
+const workerGenerateShadows = new Worker(
+  "./workers/GenerateShadows.worker.js",
+  {
+    type: "module",
+  }
+);
+
 workerGenerateShadows.onmessage = function (e) {
   var message = e.data;
   var id = message.id;
