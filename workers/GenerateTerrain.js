@@ -64,8 +64,8 @@ function generateTerrain(id) {
       sunHeight: terrain.sunHeight,
       sizeRatio: sizeRatio,
       heightmapDataBuffer: terrain.heightmaps[id].dataBuffer,
-      normalsTextureDataBuffer: terrain.heightmaps[id].shadowsTextureDataBuffer,
-      shadowsTextureDataBuffer: terrain.heightmaps[id].normalsTextureDataBuffer,
+      normalsTextureDataBuffer: terrain.heightmaps[id].normalsTextureDataBuffer,
+      shadowsTextureDataBuffer: terrain.heightmaps[id].shadowsTextureDataBuffer,
       seedBuffer: seedBuffer,
     };
 
