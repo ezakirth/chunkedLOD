@@ -43,9 +43,13 @@ void main(void)
         cliffCol = dirtCol;
 
     highp vec3 norm = normalize(n);
-    highp vec3 lightdir = vec3(-1.0,1.0,0.0);
+    highp vec3 lightdir = normalize(vec3(100.0, 0.0,-100.0));
     highp float light = dot(lightdir, norm) * .5 + .5;
 
+    highp float contrast = 100.; //input range [-100..100]
+    contrast = contrast / 100.0 + 1.; //convert to decimal & shift range: [0..2]
+    highp float intercept = .5 * (1. - contrast);
+    light *= contrast + intercept;
 
     highp vec3 FragColor =  (color + cliffCol)/2. * light;
 
