@@ -8,18 +8,9 @@ export default class Heightmap {
     this.treeNodeList = new Array();
     this.currentNode = 0;
     this.treeLoaded = false;
-    this.tree = new Quadtree(
-      this.treeNodeList,
-      0,
-      0,
-      this.size,
-      this.size,
-      terrainDepth
-    );
-    this.skirtHeight = this.size / 128;
+    this.tree = new Quadtree(this.treeNodeList, 0, 0, this.size, this.size, terrainDepth);
+    this.skirtHeight = this.size / 64; //128;
     this.heightRatio = 6;
-    this.high = 0;
-    this.low = 0;
 
     this.dataBuffer = new ArrayBuffer((this.size + 1) * (this.size + 1) * 4);
     this.dataView = new Float32Array(this.dataBuffer);
@@ -27,20 +18,12 @@ export default class Heightmap {
     this.normalsTextureDataBuffer = new ArrayBuffer(this.size * this.size * 4);
     this.normalsTextureDataView = new Uint8Array(this.normalsTextureDataBuffer);
     this.normalsTexture = gl.createTexture();
-    textures.updateTexture(
-      this.normalsTexture,
-      this.normalsTextureDataView,
-      this.size
-    );
+    textures.updateTexture(this.normalsTexture, this.normalsTextureDataView, this.size);
 
     this.shadowsTextureDataBuffer = new ArrayBuffer(this.size * this.size * 4);
     this.shadowsTextureDataView = new Uint8Array(this.shadowsTextureDataBuffer);
     this.shadowsTexture = gl.createTexture();
-    textures.updateTexture(
-      this.shadowsTexture,
-      this.shadowsTextureDataView,
-      this.size
-    );
+    textures.updateTexture(this.shadowsTexture, this.shadowsTextureDataView, this.size);
   }
   render() {
     gl.activeTexture(gl.TEXTURE2);

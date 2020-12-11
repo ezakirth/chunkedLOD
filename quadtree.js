@@ -8,7 +8,7 @@ export default class Quadtree {
     this.ymax = ymax;
     this.d = d;
     this.lod = Math.pow(2, d) * viewPort;
-    this.depth = 8 - d;
+    this.depth = terrainDepth - d;
     this.chunk = null;
     this.children = null;
     if (d > 0) {
@@ -29,12 +29,7 @@ export default class Quadtree {
   getScreenError() {
     var a = this.chunk.boundingSphere;
     var b = input.pos;
-    var d =
-      Math.sqrt(
-        (a.x + b.x) * (a.x + b.x) +
-          (a.y + b.y) * (a.y + b.y) +
-          (a.z + b.z) * (a.z + b.z)
-      ) - a.r;
+    var d = Math.sqrt((a.x + b.x) * (a.x + b.x) + (a.y + b.y) * (a.y + b.y) + (a.z + b.z) * (a.z + b.z)) - a.r;
     if (d < 0) d = 0;
     return this.lod / d;
   }
@@ -45,8 +40,10 @@ export default class Quadtree {
 
       var chunkScreenError = this.getScreenError();
 
+      let readyToDraw = child && child[0].chunk && child[1].chunk && child[2].chunk && child[3].chunk;
+
       let quality = 48;
-      if (chunkScreenError <= quality || !child) {
+      if (chunkScreenError <= quality || !child || !readyToDraw) {
         var n = chunkScreenError / (quality / 2) - 1;
         if (n > 1) n = 1;
         if (n < 0) n = 0;
@@ -60,37 +57,11 @@ export default class Quadtree {
         cnt++;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, chunk.interleavedArrayBuffer);
-        gl.vertexAttribPointer(
-          terrain.aVertexPosition,
-          4,
-          gl.FLOAT,
-          false,
-          6 * 4,
-          0
-        );
-        gl.vertexAttribPointer(
-          terrain.aTextureCoordinates,
-          2,
-          gl.FLOAT,
-          false,
-          6 * 4,
-          4 * 4
-        );
+        gl.vertexAttribPointer(terrain.aVertexPosition, 4, gl.FLOAT, false, 6 * 4, 0);
+        gl.vertexAttribPointer(terrain.aTextureCoordinates, 2, gl.FLOAT, false, 6 * 4, 4 * 4);
 
-        if (input.wireframe)
-          gl.drawElements(
-            gl.LINES,
-            terrain.indicesLength,
-            gl.UNSIGNED_SHORT,
-            0
-          );
-        else
-          gl.drawElements(
-            gl.TRIANGLES,
-            terrain.indicesLength,
-            gl.UNSIGNED_SHORT,
-            0
-          );
+        if (input.wireframe) gl.drawElements(gl.LINES, terrain.indicesLength, gl.UNSIGNED_SHORT, 0);
+        else gl.drawElements(gl.TRIANGLES, terrain.indicesLength, gl.UNSIGNED_SHORT, 0);
       } else {
         if (child) {
           child[0].renderChunk();

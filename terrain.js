@@ -1,9 +1,7 @@
 import { extractFrustum } from "./frustum.js";
-import {
-  workerGenerateTerrain,
-  generateTerrain,
-} from "./workers/GenerateTerrain.js";
+import { workerGenerateTerrain, generateTerrain } from "./workers/GenerateTerrain.js";
 import Heightmap from "./heightmap.js";
+import { workerGenerateChunk } from "./workers/GenerateChunk.js";
 
 export default class Terrain {
   constructor() {
@@ -27,10 +25,7 @@ export default class Terrain {
     this.program = prog;
     gl.useProgram(prog);
     this.aVertexPosition = gl.getAttribLocation(prog, "aVertexPosition");
-    this.aTextureCoordinates = gl.getAttribLocation(
-      prog,
-      "aTextureCoordinates"
-    );
+    this.aTextureCoordinates = gl.getAttribLocation(prog, "aTextureCoordinates");
 
     this.uMVPMatrix = gl.getUniformLocation(prog, "uMVPMatrix");
     this.uMorph = gl.getUniformLocation(prog, "uMorph");
@@ -45,16 +40,12 @@ export default class Terrain {
     this.genIndices();
 
     this.heightmaps = new Array();
-    this.sunHeight = 1;
 
     this.heightmaps.push(new Heightmap({ x: 0, z: 0 }));
 
     for (var x = -1; x <= 1; x++) {
       for (var z = -1; z <= 1; z++) {
-        if (x != 0 || z != 0)
-          this.heightmaps.push(
-            new Heightmap({ x: x * mapSize, z: z * mapSize })
-          );
+        if (x != 0 || z != 0) this.heightmaps.push(new Heightmap({ x: x * mapSize, z: z * mapSize }));
       }
     }
 
@@ -71,9 +62,7 @@ export default class Terrain {
           (x != 1 || z != -1) &&
           (x != -1 || z != 1)
         )
-          this.heightmaps.push(
-            new Heightmap({ x: x * mapSize, z: z * mapSize })
-          );
+          this.heightmaps.push(new Heightmap({ x: x * mapSize, z: z * mapSize }));
       }
     }
   }
@@ -98,8 +87,9 @@ export default class Terrain {
           }
         }
 
-        if (!used && workerGenerateTerrain.getStatus(id) == "ready")
-          terrain.heightmaps.remove(id);
+        if (!used && workerGenerateTerrain.getStatus(id) == "ready" && workerGenerateChunk.getStatus(id) == "ready") {
+          // terrain.heightmaps.remove(id);
+        }
       }
     }
 
@@ -122,9 +112,7 @@ export default class Terrain {
         if (genMap) {
           var px = Math.floor(-input.pos.x / size);
           var pz = Math.floor(-input.pos.z / size);
-          this.heightmaps.push(
-            new Heightmap({ x: px * size + x * size, z: pz * size + z * size })
-          );
+          this.heightmaps.push(new Heightmap({ x: px * size + x * size, z: pz * size + z * size }));
         }
       }
     }

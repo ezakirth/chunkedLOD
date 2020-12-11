@@ -1,43 +1,6 @@
 export default class SimplexNoise {
   constructor(p) {
-    this.grad3 = new Float32Array([
-      1,
-      1,
-      0,
-      -1,
-      1,
-      0,
-      1,
-      -1,
-      0,
-      -1,
-      -1,
-      0,
-      1,
-      0,
-      1,
-      -1,
-      0,
-      1,
-      1,
-      0,
-      -1,
-      -1,
-      0,
-      -1,
-      0,
-      1,
-      1,
-      0,
-      -1,
-      1,
-      0,
-      1,
-      -1,
-      0,
-      -1,
-      -1,
-    ]);
+    this.grad3 = new Float32Array([1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1, 0, 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1, 0, 1, 1, 0, -1, 1, 0, 1, -1, 0, -1, -1]);
 
     if (!p) {
       this.p = new Uint8Array(256);
@@ -53,7 +16,7 @@ export default class SimplexNoise {
       this.permMod12[i] = this.perm[i] % 12;
     }
   }
-  noise(xin, yin, zin) {
+  noise3D(xin, yin, zin) {
     var n0 = 0,
       n1 = 0,
       n2 = 0,

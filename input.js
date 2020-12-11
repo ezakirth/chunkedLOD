@@ -1,12 +1,10 @@
-import { updateShadows } from "./workers/initWorkers.js";
 const input = {
   active: false,
   current: { x: 0, y: 0 },
   previous: { x: 0, y: 0 },
-  //  pos :  {x: 976.4110862738892, y: -445.03714173374726, z: -1099.483974473918},
-  pos: { x: -512 / 2, y: 512, z: -512 / 2 },
-  yaw: 53,
-  pitch: 25,
+  pos: { x: -512 / 2, y: 0, z: -512 / 2 },
+  yaw: 0,
+  pitch: 20,
   gravity: 9.8,
   keyPressed: [],
   strafing: false,
@@ -62,15 +60,6 @@ const input = {
     window.addEventListener(
       "mousewheel",
       function (e) {
-        terrain.sunHeight += e.wheelDelta / 10000;
-
-        if (terrain.sunHeight > 10) terrain.sunHeight = 10;
-        if (terrain.sunHeight < -2) terrain.sunHeight = -2;
-
-        for (var id = 0; id < terrain.heightmaps.length; id++) {
-          updateShadows(id);
-        }
-        /*
         var prev = input.scale;
         if (e.wheelDelta > 0) input.scale += 0.25;
         else input.scale -= 0.25;
@@ -78,7 +67,7 @@ const input = {
         if (input.scale > 4) input.scale = 4;
         if (input.scale < 1) input.scale = 1;
 
-        if (prev != input.scale) graphics.setup(input.scale);*/
+        if (prev != input.scale) graphics.setup(input.scale);
       },
       false
     );
@@ -156,15 +145,9 @@ const input = {
       if (key.ArrowUp || key.KeyW || input.autoRun) input.speed = speed;
       if (key.ArrowDown || key.KeyS) input.speed = -speed;
       if (input.flying) {
-        input.pos.x -=
-          input.speed *
-          Math.sin((input.yaw * Math.PI) / 180) *
-          Math.cos((input.pitch * Math.PI) / 180);
+        input.pos.x -= input.speed * Math.sin((input.yaw * Math.PI) / 180) * Math.cos((input.pitch * Math.PI) / 180);
         input.pos.y += input.speed * Math.sin((input.pitch * Math.PI) / 180);
-        input.pos.z +=
-          input.speed *
-          Math.cos((input.yaw * Math.PI) / 180) *
-          Math.cos((input.pitch * Math.PI) / 180);
+        input.pos.z += input.speed * Math.cos((input.yaw * Math.PI) / 180) * Math.cos((input.pitch * Math.PI) / 180);
       } else {
         input.pos.x -= input.speed * Math.sin((input.yaw * Math.PI) / 180);
         input.pos.z += input.speed * Math.cos((input.yaw * Math.PI) / 180);
@@ -177,11 +160,9 @@ const input = {
     var id = -1;
     for (var i = 0; i < terrain.heightmaps.length; i++) {
       if (
-        -input.pos.x <
-          terrain.heightmaps[i].pos.x + terrain.heightmaps[0].size &&
+        -input.pos.x < terrain.heightmaps[i].pos.x + terrain.heightmaps[0].size &&
         -input.pos.x > terrain.heightmaps[i].pos.x &&
-        -input.pos.z <
-          terrain.heightmaps[i].pos.z + terrain.heightmaps[0].size &&
+        -input.pos.z < terrain.heightmaps[i].pos.z + terrain.heightmaps[0].size &&
         -input.pos.z > terrain.heightmaps[i].pos.z
       ) {
         id = i;
@@ -192,11 +173,7 @@ const input = {
     if (id != -1) {
       var dataView = terrain.heightmaps[id].dataView;
       if (dataView.length > 0) {
-        if (!input.flying)
-          input.pos.y +=
-            -input.jump +
-            (input.jump * airTime) / 10 +
-            (input.gravity * airTime) / 10;
+        if (!input.flying) input.pos.y += -input.jump + (input.jump * airTime) / 10 + (input.gravity * airTime) / 10;
         var size = terrain.heightmaps[id].size;
 
         var px = -input.pos.x - terrain.heightmaps[id].pos.x;
@@ -210,8 +187,7 @@ const input = {
         var b = dataView[x + (z + 1) * (size + 1)];
         a = a + modX * (dataView[x + 1 + z * (size + 1)] - a);
         b = b + modX * (dataView[x + 1 + (z + 1) * (size + 1)] - b);
-        var currHeight =
-          -(a + modY * (b - a)) / terrain.heightmaps[id].heightRatio;
+        var currHeight = -(a + modY * (b - a)) / terrain.heightmaps[id].heightRatio;
 
         if (input.pos.y > currHeight - 5 + Math.cos(totalTime * 5) / 15) {
           input.pos.y = currHeight - 5 + Math.cos(totalTime * 5) / 15;

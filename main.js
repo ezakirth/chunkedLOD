@@ -35,7 +35,7 @@ window.textures = textures;
 window.input = input;
 
 window.totalLoading = 0;
-window.terrainDepth = 6;
+window.terrainDepth = 2;
 window.mapSize = 512;
 window.sizeRatio = 1;
 window.frustum = null;

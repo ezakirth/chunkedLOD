@@ -42,8 +42,12 @@ void main(void)
     if (slope >= .8)
         cliffCol = dirtCol;
 
+    highp vec3 norm = normalize(n);
+    highp vec3 lightdir = vec3(-1.0,1.0,0.0);
+    highp float light = dot(lightdir, norm) * .5 + .5;
 
-    highp vec3 FragColor =  (color + cliffCol)/2. * texture2D(uTextureShadows, vTextureCoord).r;
+
+    highp vec3 FragColor =  (color + cliffCol)/2. * light;
 
     highp vec3 fog_color = vec3(246./255., 233./255., 180./255.);
     highp float fog_density = 1.;
@@ -52,6 +56,7 @@ void main(void)
     fog -= .2;
 
     highp vec3 col = mix( fog_color, FragColor , clamp(1. - fog, 0., 1.));
+
 
     gl_FragColor = vec4(col, 1.);
 }
